@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}Your result – PCOS Check{% endblock %}
+{% block content %}
+<section><div class="wrap">
+  <div class="panel fade">
+    <h2 style="text-align:center">Your result</h2>
+    <div class="ring">
+      <svg viewBox="0 0 128 128"><circle cx="64" cy="64" r="54" stroke="#d5e2de"/><circle id="fg" class="fg" cx="64" cy="64" r="54"/></svg>
+      <div class="mid"><b id="pct">0%</b><span>estimated risk</span></div>
+    </div>
+    <div class="badge" id="lvl"></div>
+    <div class="hint" id="mode" style="text-align:center"></div>
+    <div class="tips" id="tips"></div>
+    <div class="imp" style="margin-top:18px"><b>What the model relies on most (overall)</b><div id="imp"></div></div>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:24px">
+      <a class="btn" href="/doctors">Find a doctor near me</a>
+      <a class="btn alt" href="/screening">Redo screening</a>
+      <button class="btn alt" type="button" onclick="window.print()">Print</button>
+    </div>
+    <p class="note">Screening aid only. Not a medical diagnosis.</p>
+  </div>
+</div></section>
+{% endblock %}
+{% block scripts %}
+<script>
+const NAMES = {age: "Age", weight: "Weight", height: "Height", cycle: "Cycle regularity", cycle_length: "Cycle length",
+  weight_gain: "Weight gain", hair_growth: "Hair growth", skin_darkening: "Skin darkening", pimples: "Pimples",
+  follicle_l: "Follicles (left)", follicle_r: "Follicles (right)"};
+const TIPS = {
+  Low: ["Your answers look unlike typical PCOS cases in the dataset.", "A balanced diet and regular exercise support healthy cycles.", "If symptoms appear or change, speak to a doctor."],
+  Moderate: ["Some of your answers overlap with PCOS patterns.", "Track your cycle for 2–3 months and note any changes.", "Consider a check-up, especially if your cycles are irregular."],
+  High: ["Your answers strongly resemble PCOS cases in the dataset.", "Book an appointment with a gynaecologist for proper tests.", "Bring your cycle history and any scan reports."]
+};
+const COLOR = {Low: "#2f9e6b", Moderate: "#d99a0b", High: "#d9503f"};
+const raw = sessionStorage.getItem("pcos_result");
+
+if(!raw){ location.replace("/screening"); }
+else {
+  const d = JSON.parse(raw);
+  const c = COLOR[d.risk_level];
+  document.getElementById("fg").style.stroke = c;
+  setTimeout(() => document.getElementById("fg").style.strokeDashoffset = 339.29 * (1 - d.risk_percent / 100), 80);
+  const t0 = performance.now();
+  (function f(t){
+    const p = Math.min((t - t0) / 1500, 1);
+    document.getElementById("pct").textContent = (d.risk_percent * (1 - Math.pow(1 - p, 3))).toFixed(1) + "%";
+    if(p < 1) requestAnimationFrame(f);
+  })(t0);
+  const lvl = document.getElementById("lvl");
+  lvl.textContent = d.risk_level + " risk"; lvl.style.background = c;
+  document.getElementById("mode").textContent = d.mode === "advanced"
+    ? "Based on symptoms and ultrasound (higher-accuracy model)"
+    : "Based on symptoms only. Adding ultrasound counts improves accuracy.";
+  document.getElementById("tips").innerHTML = "<b>Suggested next steps</b><ul>" + TIPS[d.risk_level].map(x => "<li>" + x + "</li>").join("") + "</ul>";
+  const max = Math.max.apply(null, d.importance.map(i => i.value));
+  document.getElementById("imp").innerHTML = d.importance.map(i =>
+    '<div class="r"><span>' + (NAMES[i.feature] || i.feature) + '</span><div class="t"><i data-w="' + (i.value / max * 100) + '"></i></div><small>' + i.value + '%</small></div>').join("");
+  setTimeout(() => document.querySelectorAll("#imp i").forEach(b => b.style.width = b.dataset.w + "%"), 150);
+}
+</script>
+{% endblock %}
