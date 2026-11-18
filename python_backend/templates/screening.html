@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% block title %}Screening – PCOS Check{% endblock %}
+{% block content %}
+<section><div class="wrap">
+  <div class="panel">
+    <h2>Your screening</h2>
+    <h3>About you</h3>
+    <label for="age">Age (years)</label><input type="number" id="age" min="10" max="60">
+    <div class="row">
+      <div><label for="weight">Weight (kg)</label><input type="number" id="weight" step="0.1"></div>
+      <div><label for="height">Height (cm)</label><input type="number" id="height" step="0.1"></div>
+    </div>
+    <div class="bmi" id="bmi"></div>
+
+    <h3>Cycle and symptoms</h3>
+    <label>Menstrual cycle</label>
+    <div class="seg" id="cycleSeg">
+      <button type="button" data-v="2" class="on">Regular</button>
+      <button type="button" data-v="4">Irregular</button>
+    </div>
+    <label for="cycle_length">Typical cycle length: <span id="clOut">28</span> days</label>
+    <input type="range" id="cycle_length" min="2" max="60" value="28">
+    <label>Which of these apply to you?</label>
+    <div class="tgrid">
+      <button type="button" class="tog" data-k="weight_gain">Recent weight gain</button>
+      <button type="button" class="tog" data-k="hair_growth">Excess hair growth</button>
+      <button type="button" class="tog" data-k="skin_darkening">Skin darkening</button>
+      <button type="button" class="tog" data-k="pimples">Pimples or acne</button>
+    </div>
+
+    <h3>Ultrasound (optional)</h3>
+    <div class="hint">If you have a scan report, enter the follicle count for each ovary for a more accurate result. Leave both blank to skip.</div>
+    <div class="row">
+      <div><label for="follicle_l">Left ovary</label><input type="number" id="follicle_l" min="0" max="40"></div>
+      <div><label for="follicle_r">Right ovary</label><input type="number" id="follicle_r" min="0" max="40"></div>
+    </div>
+
+    <div class="err" id="err"></div>
+    <button class="btn" type="button" id="go">Get my result</button>
+  </div>
+</div></section>
+{% endblock %}
+{% block scripts %}
+<script>
+const $ = id => document.getElementById(id);
+const state = {cycle: 2, weight_gain: 0, hair_growth: 0, skin_darkening: 0, pimples: 0};
+
+function bmi(){
+  const w = +$("weight").value, h = +$("height").value;
+  if(w > 0 && h > 0){
+    const b = w / Math.pow(h / 100, 2);
+    const c = b < 18.5 ? "Underweight" : b < 25 ? "Normal" : b < 30 ? "Overweight" : "Obese";
+    $("bmi").textContent = "BMI " + b.toFixed(1) + " (" + c + ")";
+    $("bmi").style.display = "block";
+  } else $("bmi").style.display = "none";
+}
+$("weight").oninput = $("height").oninput = bmi;
+$("cycle_length").oninput = e => $("clOut").textContent = e.target.value;
+
+document.querySelectorAll("#cycleSeg button").forEach(b => b.onclick = () => {
+  document.querySelectorAll("#cycleSeg button").forEach(x => x.classList.remove("on"));
+  b.classList.add("on"); state.cycle = +b.dataset.v;
+});
+document.querySelectorAll(".tog").forEach(b => b.onclick = () => {
+  b.classList.toggle("on"); state[b.dataset.k] = b.classList.contains("on") ? 1 : 0;
+});
+
+$("go").onclick = async () => {
+  const a = +$("age").value, w = +$("weight").value, h = +$("height").value;
+  const l = $("follicle_l").value, r = $("follicle_r").value;
+  let e = "";
+  if(!(a >= 10 && a <= 60)) e = "Enter an age between 10 and 60.";
+  else if(!(w >= 25 && w <= 200)) e = "Enter a weight between 25 and 200 kg.";
+  else if(!(h >= 120 && h <= 210)) e = "Enter a height between 120 and 210 cm.";
+  else if((l === "") !== (r === "")) e = "Fill in both follicle counts, or leave both blank.";
+  $("err").textContent = e;
+  if(e) return;
+
+  const body = Object.assign({age: a, weight: w, height: h, cycle_length: +$("cycle_length").value}, state);
+  if(l !== ""){ body.follicle_l = +l; body.follicle_r = +r; }
+  $("go").textContent = "Analysing…";
+  try{
+    const res = await fetch("/predict", {method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify(body)});
+    const d = await res.json();
+    if(!res.ok) throw new Error(d.error || "Request failed");
+    sessionStorage.setItem("pcos_result", JSON.stringify(d));
+    location.href = "/result";
+  }catch(err){
+    $("err").textContent = "Error: " + err.message;
+    $("go").textContent = "Get my result";
+  }
+};
+</script>
+{% endblock %}

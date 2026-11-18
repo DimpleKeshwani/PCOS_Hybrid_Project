@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}PCOS Check{% endblock %}</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+{% block head %}{% endblock %}
+</head>
+<body>
+<header class="nav"><div class="wrap">
+  <a class="logo" href="/">PCOS Check</a>
+  <nav>
+    <a href="/learn" class="{{ 'on' if page == 'learn' }}">About PCOS</a>
+    <a href="/screening" class="{{ 'on' if page in ('screening', 'result') }}">Screening</a>
+    <a href="/doctors" class="{{ 'on' if page == 'doctors' }}">Find doctors</a>
+  </nav>
+</div></header>
+{% block content %}{% endblock %}
+<footer><div class="wrap">PCOS Check is a screening aid, not a medical diagnosis. Please consult a doctor for any health concern.</div></footer>
+{% block scripts %}{% endblock %}
+</body>
+</html>

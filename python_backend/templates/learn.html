@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}About PCOS{% endblock %}
+{% block content %}
+<section><div class="wrap">
+  <h2>What PCOS does to the ovaries</h2>
+  <p class="lead">Polycystic ovary syndrome (PCOS) is a hormonal condition. The ovaries often hold many small follicles that do not mature and release an egg, which is why cycles become irregular.</p>
+  <div class="compare">
+    <figure>
+      <svg viewBox="0 0 200 150" role="img" aria-label="Normal ovary with one large follicle">
+        <ellipse cx="100" cy="75" rx="80" ry="55" fill="#e8f1ee" stroke="#0f766e" stroke-width="3"/>
+        <circle cx="112" cy="70" r="24" fill="#fff" stroke="#0f766e" stroke-width="2"/>
+        <circle cx="112" cy="70" r="8" fill="#e8664d" opacity=".5"/>
+        <circle cx="62" cy="88" r="7" fill="#fff" stroke="#0f766e" stroke-width="2"/>
+      </svg>
+      <figcaption>Typical ovary: one follicle matures each cycle</figcaption>
+    </figure>
+    <figure>
+      <svg viewBox="0 0 200 150" role="img" aria-label="PCOS ovary with many small follicles">
+        <ellipse cx="100" cy="75" rx="80" ry="55" fill="#f9e1da" stroke="#e8664d" stroke-width="3"/>
+        <g fill="#fff" stroke="#e8664d" stroke-width="2">
+          <circle cx="52" cy="70" r="9"/><circle cx="76" cy="46" r="8"/><circle cx="106" cy="40" r="9"/>
+          <circle cx="136" cy="50" r="8"/><circle cx="154" cy="76" r="9"/><circle cx="140" cy="104" r="8"/>
+          <circle cx="108" cy="110" r="9"/><circle cx="76" cy="104" r="8"/><circle cx="100" cy="76" r="7"/>
+        </g>
+      </svg>
+      <figcaption>PCOS ovary: many small follicles that stay small</figcaption>
+    </figure>
+  </div>
+</div></section>
+
+<section style="background:var(--sage)"><div class="wrap cols">
+  <div>
+    <h3>Common signs</h3>
+    <ul>
+      <li>Irregular or missed periods</li>
+      <li>Weight gain, especially around the waist</li>
+      <li>Excess facial or body hair</li>
+      <li>Acne or oily skin</li>
+      <li>Dark, velvety patches of skin</li>
+    </ul>
+  </div>
+  <div>
+    <h3>When to see a doctor</h3>
+    <p>Book an appointment if your periods are irregular for several months, if you are trying to conceive without success, or if several of these signs appear together. A doctor confirms PCOS with blood tests and an ultrasound.</p>
+    <a class="btn" href="/screening">Check my risk</a>
+  </div>
+</div></section>
+{% endblock %}
