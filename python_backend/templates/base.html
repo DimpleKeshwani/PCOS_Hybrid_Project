@@ -1,23 +1,46 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{% block title %}PCOS Check{% endblock %}</title>
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<script>
+(function(){
+  var t = null;
+  try{ t = localStorage.getItem("pcos-theme"); }catch(e){}
+  if(!t) t = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  document.documentElement.dataset.theme = t;
+})();
+</script>
 {% block head %}{% endblock %}
 </head>
 <body>
 <header class="nav"><div class="wrap">
   <a class="logo" href="/">PCOS Check</a>
-  <nav>
-    <a href="/learn" class="{{ 'on' if page == 'learn' }}">About PCOS</a>
-    <a href="/screening" class="{{ 'on' if page in ('screening', 'result') }}">Screening</a>
-    <a href="/doctors" class="{{ 'on' if page == 'doctors' }}">Find doctors</a>
-  </nav>
+  <div class="menu">
+    <nav>
+      <a href="/learn" class="{{ 'on' if page == 'learn' }}">About PCOS</a>
+      <a href="/screening" class="{{ 'on' if page in ('screening', 'result') }}">Screening</a>
+      <a href="/doctors" class="{{ 'on' if page == 'doctors' }}">Find doctors</a>
+    </nav>
+    <button class="theme" id="theme" type="button" aria-label="Toggle dark mode">🌙</button>
+  </div>
 </div></header>
 {% block content %}{% endblock %}
 <footer><div class="wrap">PCOS Check is a screening aid, not a medical diagnosis. Please consult a doctor for any health concern.</div></footer>
+<script>
+(function(){
+  var b = document.getElementById("theme"), r = document.documentElement;
+  function paint(){ b.textContent = r.dataset.theme === "dark" ? "☀️" : "🌙"; }
+  paint();
+  b.onclick = function(){
+    r.dataset.theme = r.dataset.theme === "dark" ? "light" : "dark";
+    try{ localStorage.setItem("pcos-theme", r.dataset.theme); }catch(e){}
+    paint();
+  };
+})();
+</script>
 {% block scripts %}{% endblock %}
 </body>
 </html>
