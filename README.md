@@ -32,8 +32,8 @@ Python, Flask, scikit-learn, pandas, SHAP, HTML/CSS/JavaScript, Leaflet, Gunicor
 
 ## Run it locally
 ```
-git clone https://github.com/DimpleKeshwani/PCOS_Hybrid_Project.git
-cd PCOS_Hybrid_Project
+git clone https://github.com/DimpleKeshwani/PCOS-Check.git
+cd PCOS-Check
 pip install -r requirements.txt
 cd python_backend
 python app.py
