@@ -1,7 +1,7 @@
-# PCOS Check: Hybrid Risk Screening Project
+# PCOS Check: Explainable PCOS Risk Screening
 
 A web app that estimates how closely a person's symptoms match PCOS patterns,
-explains the result, and helps find nearby doctors.
+explains each result with SHAP, and helps find nearby doctors.
 
 > **Screening aid only. This is not a medical diagnosis.**
 
