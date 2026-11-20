@@ -5,9 +5,7 @@ explains each result with SHAP, and helps find nearby doctors.
 
 > **Screening aid only. This is not a medical diagnosis.**
 
-**Live demo:** https://pcos-hybrid-project.onrender.com/
-
-## Features
+**Live demo:** https://pcos-hybrid-project.onrender.com/## Featuress
 - Multi-page site: Home, About PCOS, Screening, Result, Find Doctors
 - Random Forest model trained on 541 patient records
 - Optional ultrasound (follicle count) model for higher accuracy
@@ -32,8 +30,8 @@ Python, Flask, scikit-learn, pandas, SHAP, HTML/CSS/JavaScript, Leaflet, Gunicor
 
 ## Run it locally
 ```
-git clone https://github.com/DimpleKeshwani/PCOS_Hybrid_Project.git
-cd PCOS_Hybrid_Project
+git clone https://github.com/DimpleKeshwani/PCOS-Check.git
+cd PCOS-Check
 pip install -r requirements.txt
 cd python_backend
 python app.py
